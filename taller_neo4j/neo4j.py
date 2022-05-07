@@ -37,14 +37,17 @@ class Neo4j_app():
     result= tx.run(query, name= name)
     return [{'vendor': r['v']['name']} for r in result]
 
-  def create_product(self, product, category):
+  def create_product(self, product, category, vendor_name):
     with self.driver.session() as session:
-      result= session.write_transaction(self._create_and_return_product, product,  category)
+      result= session.write_transaction(self._create_and_return_product, product,  category, vendor_name)
       return result
 
-  def _create_and_return_product(self, tx, product, category):
+  def _create_and_return_product(self, tx, product, category, vendor):
     query= (f'''
+    MATCH (v:Vendor)
+    WHERE v.name = '{vendor}'
     CREATE (p:Product {{product: '{product}', category: '{category}'}})
+    CREATE (v)-[:Has]->(p)
     return p
     ''')
     result= tx.run(query, category= category)
