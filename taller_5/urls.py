@@ -18,5 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('neo4j/', include('neo4j.urls'))
+    path('neo4j/', include('taller_neo4j.urls'))
 ]
