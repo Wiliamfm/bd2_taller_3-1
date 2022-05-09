@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "b5a9a687-757d-4ea4-9fa4-a542abbefbd2",
+		"name": "Bd2 Taller 5",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create clients",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Client 1",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/neo4j/clients/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"neo4j",
+						"clients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create vendors",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Vendor 1",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/neo4j/vendors/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"neo4j",
+						"vendors",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create products",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "product",
+							"value": "Product 1",
+							"type": "default"
+						},
+						{
+							"key": "category",
+							"value": "Example",
+							"type": "default"
+						},
+						{
+							"key": "vendor",
+							"value": "Vendor 1",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/neo4j/products/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"neo4j",
+						"products",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buy product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buyer",
+							"value": "Client 1",
+							"type": "default"
+						},
+						{
+							"key": "product",
+							"value": "Product 1",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/neo4j/clients/buy/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"neo4j",
+						"clients",
+						"buy",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "recommend product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buyer",
+							"value": "Client 1",
+							"type": "default"
+						},
+						{
+							"key": "product",
+							"value": "Product 1",
+							"type": "default"
+						},
+						{
+							"key": "qualification",
+							"value": "5",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/neo4j/clients/recomendation/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"neo4j",
+						"clients",
+						"recomendation",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "top products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/neo4j/products/top/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"neo4j",
+						"products",
+						"top",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
