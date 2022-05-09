@@ -1,5 +1,10 @@
 # bd2_taller_3-1
 
+## Integrants:
+
+- Helman Stick
+- William Fonseca
+
 ## Link video:
 
 - https://youtu.be/qsc1ge3unxo
