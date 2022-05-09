@@ -7,9 +7,24 @@ PASSWORD= '1234'
 class Neo4j_app():
   def __init__(self, url, user, password):
     self.driver= GraphDatabase.driver(url, auth= (user, password))
+    #self.create_constraints(f'''
+    #CREATE CONSTRAINT ON (p:Person)
+    #ASSERT p.name IS UNIQUE
+    #''')
+    #self.create_constraints(f'''
+    #CREATE CONSTRAINT ON (p:Product)
+    #ASSERT p.product IS UNIQUE
+    #''')
   
   def close(self):
     self.driver.close()
+
+  def _create_constraints(self, tx, query):
+    return tx.run(query)
+  
+  def create_constraints(self, constraint):
+    with self.driver.session() as session:
+      return session.write_transaction(self._create_constraints, query= constraint)
 
   def get_client_by_name(self, name):
     with self.driver.session() as session:
@@ -101,7 +116,10 @@ class Neo4j_app():
     return p
     ''')
     result= tx.run(query, product= product, category= category, vendor= vendor)
-    return result.single()['p']
+    try:
+      return result.single()['p']
+    except:
+      return None
     #return [{'product': r['p']['product'], 'category': r['p']['category']} for r in result]
 
   def _buy_product(self, tx, buyer, product):
@@ -125,41 +143,44 @@ class Neo4j_app():
       result= session.write_transaction(self._buy_product, buyer, product)
       return result
   
-  def _recomend_product(self, tx, buyer, product, calification):
+  def _recomend_product(self, tx, buyer, product, qualification):
     query= (f'''
     MATCH (p:Product)
     WHERE p.product = '{product}'
-    MATCH (p)<-[:Buy]-(c:Client)
+    MATCH (p)<-[b:Buy]-(c:Client)
     WHERE c.name= '{buyer}'
-    CREATE (c)-[:Recommend {{calification: '{calification}'}}]->(p)
+    CREATE (c)-[:Recommend {{qualification: {qualification}}}]->(p)
     return p
     ''')
-    result= tx.run(query, buyer= buyer, product= product, calification= calification)
+    
+    result= tx.run(query, buyer= buyer, product= product, qualification= qualification)
     try:
       return result.single()['p']
     except:
       return None
     #return [{'product': r['p']['product'], 'category': r['p']['category']} for r in result]
 
-  def recomend_product(self, buyer, product, calification):
+  def recomend_product(self, buyer, product, qualification):
     with self.driver.session() as session:
-      result= session.write_transaction(self._recomend_product, buyer, product, calification)
+      result= session.write_transaction(self._recomend_product, buyer, product, qualification)
       return result
 
-  def _top_products(self, tx, n):
+  def _top_sell_products(self, tx, n):
     query= (f'''
-    MATCH (p:Product)
-    RETURN sum(p.calification)
-    WHERE p.product = '{product}'
-    MATCH (c:Client)
-    WHERE c.name= '{buyer}'
-    CREATE (c)-[:Buy]->(p)
-    return p
+    MATCH (p:Product)<-[b:Buy]-(:Client)
+    WITH p, count(b) AS qty
+    MATCH (:Client)-[r:Recommend]->(p)
+    RETURN p, qty, avg(r.qualification) AS average_qualification
+    ORDER BY qty DESC
+    LIMIT {n}
     ''')
-    result= tx.run(query, buyer= buyer, product= product)
-    return [{'product': r['p']['product'], 'category': r['p']['category']} for r in result]
+    result= tx.run(query, n= n)
+    try:
+      return [{'product': r['p']['product'], 'category': r['p']['category'], 'qty': r['qty'], 'avg': r['average_qualification']} for r in result]
+    except:
+      return None
 
-  def top_products(self, n):
+  def top_sell_products(self, n):
     with self.driver.session() as session:
-      result= session.write_transaction(self._top_products, n)
+      result= session.write_transaction(self._top_sell_products, n)
       return result

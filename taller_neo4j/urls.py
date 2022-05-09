@@ -9,6 +9,6 @@ urlpatterns = [
     path('products/', views.products, name='products'),
     path('clients/buy/', views.buy_products, name='buy_products'),
     path('clients/recomendation/', views.recomendations, name='recomendations'),
-    path('products/tops/<int:x>/', views.top_products, name='top_products'),
+    path('products/top/<int:n>/', views.top_products, name='top_products'),
     #path('', views., name='')
 ]
