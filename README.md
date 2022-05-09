@@ -2,7 +2,7 @@
 
 ## Link video:
 
-- 
+- https://youtu.be/qsc1ge3unxo
 
 ## Stack:
 
