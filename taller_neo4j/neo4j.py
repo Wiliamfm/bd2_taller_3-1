@@ -184,3 +184,29 @@ class Neo4j_app():
     with self.driver.session() as session:
       result= session.write_transaction(self._top_sell_products, n)
       return result
+
+  def _top_recommendations(self, tx, buyer, product):
+    query= (f'''
+    MATCH (p:Product)<-[:Buy]-(c:Client)
+    WHERE p.product = '{product}' AND c.name <> '{buyer}'
+    WITH distinct c, p
+    match (c)-[b:Buy]->(p2:Product)
+    where p2.product <> p.product
+        call{{
+            with p2
+            match (:Client)-[r:Recommend]->(p2)
+            return avg(r.qualification) as avg
+        }}
+    return p2, count(b)*0.4 as qty, avg
+    order by qty+avg DESC
+    ''')
+    result= tx.run(query, buyer= buyer, product= product)
+    try:
+      return [{'product': r['p2']['product'], 'qty': r['qty'], 'avg': r['avg']} for r in result]
+    except:
+      return None
+
+  def top_recommendations(self, buyer, product):
+    with self.driver.session() as session:
+      result= session.write_transaction(self._top_recommendations, buyer, product)
+      return result

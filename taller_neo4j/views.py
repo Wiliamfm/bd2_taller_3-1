@@ -55,7 +55,11 @@ def buy_products(request):
     data= request.POST
     p= neo4j_app.buy_product(buyer= data['buyer'], product= data['product'])
     if p:
-      return JsonResponse(data= {k:p[k] for k in p.keys()}, status= 201)
+      products= neo4j_app.top_recommendations(buyer= data['buyer'], product= data['product'])
+      if products:
+        return JsonResponse(data= [p for p in products], safe= False, status= 201)
+      else:
+        return JsonResponse(data= {'msg': f'There is no recommendations for this product ({data["product"]})', 'product': {k: p[k] for k in p.keys()}})
     else:
       return JsonResponse(data= {'msg': f'The product {data["product"]} could not be buy'})
   return HttpResponseNotFound(content= 'No implemented')
